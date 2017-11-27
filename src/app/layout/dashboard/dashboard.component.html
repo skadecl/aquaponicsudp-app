@@ -1,0 +1,47 @@
+<div class="section-content">
+  <h2 class="text-muted">Monitoreo</h2>
+
+  <hr>
+  <h5
+    class="text-muted">Sensores
+    <button
+      routerLink="table"
+      routerLinkActive="btn-primary"
+      class="btn btn-default btn-sm pull-right pointer"
+      type="button">
+      <i class="fa fa-bars"></i>
+    </button>
+    <span class="pull-right">&nbsp;&nbsp;&nbsp;</span>
+    <button
+      routerLink="card"
+      routerLinkActive="btn-primary"
+      class="btn btn-default btn-sm pull-right pointer"
+      type="button">
+      <i class="fa fa-newspaper-o"></i>
+    </button>
+  </h5>
+  <router-outlet></router-outlet>
+  <br>
+  <hr>
+  <h5 class="text-muted">Actuadores</h5>
+  <div class="row">
+    <div class="col-lg-4 col-md-6" *ngFor="let actuator of actuators">
+      <button routerLink="/actuators/{{actuator.id}}" class="btn btn-lg btn-{{actuator.style}} border border-dark" type="button"><i class="fa fa-{{actuator.icon}} fa-fw"></i> {{actuator.name}} &nbsp;&nbsp;&nbsp;
+        <span class="badge" [ngClass]="{'badge-success': actuator.status, 'badge-danger': !actuator.status}">{{actuator.status ? 'Encendido' : 'Apagado'}}</span></button>
+    </div>
+  </div>
+  <br>
+  <hr>
+  <h5 class="text-muted">Alarmas Activas</h5>
+  <div class="row">
+    <div class="col-lg-12" *ngIf="alarms.length == 0">
+      <span class="text-info">No hay alarmas activas.</span>
+    </div>
+
+    <div class="col-lg-3 col-md-3" *ngFor="let alarm of alarms">
+      <button class="btn btn-lg btn-{{alarm.style}} border border-dark" type="button"><i class="fa fa-{{alarm.icon}} fa-fw"></i> {{alarm.name}}</button>
+    </div>
+  </div>
+
+
+</div>

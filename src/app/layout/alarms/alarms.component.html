@@ -1,0 +1,116 @@
+<div class="section-content" *ngIf="!loading">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="text-muted">Gestión de Alarmas</h2>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-2 col-sm-1">
+      <button class="btn btn-primary" (click)="onRefresh()" [disabled]="refreshing"><i class="fa fa-refresh fa-spin" *ngIf="refreshing"></i><i class="fa fa-refresh" *ngIf="!refreshing"></i></button>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-lg-12" *ngIf="!alarms.length">
+      <span class="text-info mt-2">Este sensor no tiene alarmas.</span>
+    </div>
+
+    <div class="col-lg-12" *ngIf="alarms.length">
+      <div class="card mb-3">
+        <table class="card-block table table-hover">
+          <thead>
+          <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Sensor</th>
+            <th class="d-none d-md-table-cell">Tipo</th>
+            <th class="d-none d-md-table-cell">Valor</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let alarm of alarms" class="pointer">
+            <td (click)="onEnterAlarm(alarm.id)" width="10" ><i class="fa fa-{{alarm.icon}}"></i></td>
+            <td (click)="onEnterAlarm(alarm.id)">{{alarm.name}} <i class="fa fa-eye text-primary" *ngIf="isSubscribed(alarm.id)"></i></td>
+            <td (click)="onEnterAlarm(alarm.id)" class="text-muted">{{alarm.sensor.name}}</td>
+            <td (click)="onEnterAlarm(alarm.id)" class="text-info d-none d-md-table-cell">{{parseAlarmType(alarm.type)}}</td>
+            <td (click)="onEnterAlarm(alarm.id)" class="text-info d-none d-md-table-cell">{{alarm.value}}</td>
+            <td (click)="onEnterAlarm(alarm.id)" [ngClass]="{'text-success': alarm.status, 'text-danger': !alarm.status}">{{alarm.status ? 'Lista' : 'Desactivada'}}</td>
+            <td ngbDropdown placement="top-right" container="body">
+              <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="alLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': alLoading}"></i></button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <button
+                  *ngIf="isSubscribed(alarm.id)"
+                  class="dropdown-item"
+                  (click)="onUnsubscribe(alarm.id)"
+                ><i class="fa fa-eye-slash"></i> Desuscribir
+                </button>
+                <button
+                  *ngIf="!isSubscribed(alarm.id)"
+                  class="dropdown-item"
+                  (click)="onSubscribe(alarm)"
+                ><i class="fa fa-eye"></i> Suscribir
+                </button>
+                <button
+                  (click)="editAlarm.openEditModal(alarm, true)"
+                  class="dropdown-item"
+                ><i class="fa fa-pencil"></i> Editar
+                </button>
+                <button
+                  *ngIf="alarm.status"
+                  class="dropdown-item"
+                  (click)="onDisableAlarm(alarm.id)"
+                ><i class="fa fa-stop-circle"></i> Desactivar
+                </button>
+                <button
+                  *ngIf="!alarm.status"
+                  class="dropdown-item"
+                  (click)="onEnableAlarm(alarm.id)"
+                ><i class="fa fa-play-circle"></i> Activar
+                </button>
+                <button
+                  (click)="onDeleteAlarm(alarm.id)"
+                  class="dropdown-item"
+                ><i class="fa fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-content" *ngIf="loading">
+  <div class="row">
+    <div class="col">
+      <i class="fa fa-spin fa-circle-o-notch"></i>
+    </div>
+  </div>
+</div>
+
+<!--Confirm modal-->
+<ng-template let-c="close" let-d="dismiss" #cm>
+  <div class="modal-body">
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> la alarma?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
+
+<app-alarm-edit (onFinish)="onAlarmEdited($event)"></app-alarm-edit>

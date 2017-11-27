@@ -1,0 +1,144 @@
+<div class="section-content">
+  <div class="actuator-detail-content" *ngIf="!loading">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header bg-{{actuator.style}}">
+            <span>
+              <h2 class="text-white">
+                <i class="fa fa-{{actuator.icon}} text-white"></i> &nbsp;{{actuator.name}}
+                <div class="pull-right">
+                  <div ngbDropdown placement="bottom-right">
+                    <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="senLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': senLoading}"></i></button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button
+                        (click)="editActuator.openModal(true, actuator)"
+                        class="dropdown-item"
+                      ><i class="fa fa-pencil"></i> Editar
+                      </button>
+                      <button
+                        *ngIf="actuator.status"
+                        class="dropdown-item"
+                        (click)="onDisableActuator()"
+                      ><i class="fa fa-toggle-off"></i> Apagar
+                      </button>
+                      <button
+                        *ngIf="!actuator.status"
+                        class="dropdown-item"
+                        (click)="onEnableActuator()"
+                      ><i class="fa fa-toggle-on"></i> Encender
+                      </button>
+                      <button
+                        *ngIf="actuator.lock"
+                        class="dropdown-item"
+                        (click)="onUnlockActuator()"
+                      ><i class="fa fa-unlock"></i> Desbloquear
+                      </button>
+                      <button
+                        *ngIf="!actuator.lock"
+                        class="dropdown-item"
+                        (click)="onLockActuator()"
+                      ><i class="fa fa-lock"></i> Bloquear
+                      </button>
+                      <button
+                        (click)="onDeleteActuator()"
+                        class="dropdown-item"
+                      ><i class="fa fa-trash"></i> Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </h2>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <h5 class="text-muted">Información</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-9 col-lg-10">
+        <div class="card border-{{actuator.style}} mb-3">
+          <div class="card-header bg-transparent" style="min-height: 6.5rem;">
+            {{actuator.description}}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 col-lg-2">
+        <div class="card border-{{actuator.style}} mb-3">
+          <div class="card-header bg-transparent small" style="min-height: 6.5rem;">
+            <span class="d-block">Estado: <span [ngClass]="{'text-success': actuator.status, 'text-danger': !actuator.status}">{{actuator.status ? 'Encendido' : 'Apagado'}}</span></span>
+            <span class="d-block">Bloqueo: <span><i class="fa" [ngClass]="{'fa-lock text-danger': actuator.lock, 'fa-unlock text-success': !actuator.lock}"></i></span></span>
+            <span class="d-block">Creado: <span class="text-info">{{actuator.createdAt | date:'d/M/yy'}}</span></span>
+            <span class="d-block">Editado: <span class="text-info">{{actuator.updatedAt | date:'d/M/yy'}}</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-12">
+        <nav class="nav nav-tabs" role="tablist">
+          <a
+            (click)="setTab('history')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'history'}"
+          ><i class="fa fa-history"></i> Historial
+          </a>
+          <a
+            (click)="setTab('errors')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'errors'}"
+          ><i class="fa fa-exclamation-circle"></i> Errores
+          </a>
+          <!--<a-->
+          <!--(click)="setTab('history')"-->
+          <!--class="nav-item nav-link"-->
+          <!--[ngClass]="{'active text-primary': tab == 'history'}"-->
+          <!--&gt;<i class="fa fa-history"></i> Historial-->
+          <!--</a>-->
+        </nav>
+        <app-actuator-detail-history [id]="id" [hidden]="tab != 'history'"></app-actuator-detail-history>
+        <app-actuator-detail-errors [id]="id" [hidden]="tab != 'errors'"></app-actuator-detail-errors>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-lg-12">
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+    </div>
+  </div>
+</div>
+
+
+<!--Confirm modal-->
+<ng-template let-c="close" let-d="dismiss" #cm>
+  <div class="modal-body">
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> el actuador?</p>
+    <br>
+    <p *ngIf="confirmText == 'ENCENDER' || confirmText == 'APAGAR'">
+      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
+      <span class="small">Al apagar o encender manualmente un actuador, éste se bloqueará automáticamente, es decir, su estado no será cambiado por alarmas hasta ser desbloqueado manualmente.</span>
+    </p>
+    <p *ngIf="confirmText == 'BLOQUEAR'">
+      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
+      <span class="small">Al bloquear este actuador, su estado no podrá ser cambiado por alarmas y solo podrá ser encendido/apagado manualmente.</span>
+    </p>
+    <p *ngIf="confirmText == 'DESBLOQUEAR'">
+      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
+      <span class="small">Al desbloquear este actuador, su estado podrá ser cambiado por alarmas.</span>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<app-actuator-edit></app-actuator-edit>

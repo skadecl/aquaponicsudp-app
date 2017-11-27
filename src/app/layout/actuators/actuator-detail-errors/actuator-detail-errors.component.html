@@ -1,0 +1,42 @@
+<div class="row mt-2">
+  <div class="col" *ngIf="loading">
+    <i class="fa fa-spin fa-circle-o-notch"></i>
+  </div>
+
+  <div class="col" *ngIf="!loading">
+    <p class="text-info" *ngIf="!errors.length">Este actuador no tiene errores</p>
+
+    <div class="mb-3" *ngIf="errors.length">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Mensaje</th>
+          <th>Fecha</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let error of errors; let i = index">
+          <td>{{i+1}}</td>
+          <td class="text-danger">{{error.message}}</td>
+          <td class="text-info">{{error.sampledate | date:'d/M/yy, h:mm a'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <nav [hidden]="page == 1 && errors.length < limit">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <button class="btn btn-light" [disabled]="page == 1 || subLoading" (click)="getPrev()">Anterior</button>
+        </li>
+        <li class="mr-auto"></li>
+        <li *ngIf="subLoading"><i class="fa fa-spin fa-circle-o-notch text-muted fa-2x"></i></li>
+        <li class="mr-auto"></li>
+        <li class="page-item">
+          <button class="btn btn-light" [disabled]="errors.length < limit || subLoading" (click)="getNext()">Siguiente</button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

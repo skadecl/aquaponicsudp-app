@@ -1,0 +1,137 @@
+<div class="section-content">
+  <div class="sensor-detail-content" *ngIf="!loading">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header bg-{{sensor.style}}">
+            <span>
+              <h2 class="text-white">
+                <i class="fa fa-{{sensor.icon}} text-white"></i> &nbsp;{{sensor.name}}
+                <div class="pull-right">
+                  <div ngbDropdown placement="bottom-right">
+                    <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="senLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': senLoading}"></i></button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button
+                        class="dropdown-item"
+                        (click)="alarmsView.newAlarm()"
+                        ><i class="fa fa-plus"></i> Crear Alarma
+                      </button>
+                      <button
+                        (click)="editSensor.openModal(true, sensor)"
+                        class="dropdown-item"
+                        ><i class="fa fa-pencil"></i> Editar
+                      </button>
+                      <button
+                        *ngIf="sensor.status"
+                        class="dropdown-item"
+                        (click)="onDisableSensor()"
+                        ><i class="fa fa-stop-circle"></i> Desactivar
+                      </button>
+                      <button
+                        *ngIf="!sensor.status"
+                        class="dropdown-item"
+                        (click)="onEnableSensor()"
+                      ><i class="fa fa-play-circle"></i> Activar
+                      </button>
+                      <button
+                        (click)="onDeleteSensor()"
+                        class="dropdown-item"
+                        ><i class="fa fa-trash"></i> Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </h2>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col">
+        <h5 class="text-muted">Información</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-6 col-lg-8">
+        <div class="card border-{{sensor.style}} mb-3">
+          <div class="card-header bg-transparent" style="min-height: 7.5rem;">
+            {{sensor.description}}
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="card border-{{sensor.style}} mb-3">
+          <div class="card-header bg-transparent small" style="min-height: 7.5rem;">
+            <span class="d-block">Actual: <span class="text-info">{{sensor.value}} {{sensor.unit}}</span></span>
+            <span class="d-block">Media: <span class="text-info">{{sensor.avg || '--'}} {{sensor.unit}}</span></span>
+            <span class="d-block">Máximo: <span class="text-info">{{sensor.value || '--'}} {{sensor.unit}}</span></span>
+            <span class="d-block">Mínimo: <span class="text-info">{{sensor.value || '--'}} {{sensor.unit}}</span></span>
+            <span class="d-block">Mediciones: <span class="text-info">{{sensor.count}}</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="card border-{{sensor.style}} mb-3">
+          <div class="card-header bg-transparent small" style="min-height: 7.5rem;">
+            <span class="d-block">Tipo: <span class="text-info">{{parseType(sensor.type)}}</span></span>
+            <span class="d-block">Unidad: <span class="text-info">{{sensor.unit || '--'}}</span></span>
+            <span class="d-block">Estado: <span [ngClass]="{'text-success': sensor.status, 'text-danger': !sensor.status}">{{sensor.status ? 'Activo' : 'Inactivo'}}</span></span>
+            <span class="d-block">Creado: <span class="text-info">{{sensor.createdAt | date:'d/M/yy'}}</span></span>
+            <span class="d-block">Editado: <span class="text-info">{{sensor.updatedAt | date:'d/M/yy'}}</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-12">
+        <nav class="nav nav-tabs" role="tablist">
+          <a
+            (click)="setTab('alarms')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'alarms'}"
+            ><i class="fa fa-bell"></i> Alarmas
+          </a>
+          <a
+            (click)="setTab('errors')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'errors'}"
+            ><i class="fa fa-exclamation-circle"></i> Errores
+          </a>
+          <!--<a-->
+            <!--(click)="setTab('history')"-->
+            <!--class="nav-item nav-link"-->
+            <!--[ngClass]="{'active text-primary': tab == 'history'}"-->
+            <!--&gt;<i class="fa fa-history"></i> Historial-->
+          <!--</a>-->
+        </nav>
+        <app-detail-sensor-alarms [id]="id" [unit]="sensor.unit" [hidden]="tab != 'alarms'"></app-detail-sensor-alarms>
+        <app-detail-sensor-errors [id]="id" [hidden]="tab != 'errors'"></app-detail-sensor-errors>
+        <app-detail-sensor-history [hidden]="tab != 'history'"></app-detail-sensor-history>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-lg-12">
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+    </div>
+  </div>
+</div>
+
+
+<!--Confirm modal-->
+<ng-template let-c="close" let-d="dismiss" #cm>
+  <div class="modal-body">
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> el sensor?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<app-sensor-edit></app-sensor-edit>

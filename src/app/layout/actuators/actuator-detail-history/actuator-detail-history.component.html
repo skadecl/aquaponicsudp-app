@@ -1,0 +1,52 @@
+<div class="section-content mt-2">
+  <div class="row">
+    <div class="col" *ngIf="!loading">
+      <p class="text-info" *ngIf="!actions.length">Este actuador no tiene historial</p>
+
+      <div class="mb-3" *ngIf="actions.length">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Acción</th>
+            <th>Confirmado</th>
+            <th>Origen</th>
+            <th>Intentos</th>
+            <th>Fecha</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let action of actions; let i = index">
+            <td>{{(page-1)*limit + i + 1}}</td>
+            <td [ngClass]="{'text-success': action.status, 'text-danger': !action.status}">{{action.status ? 'Encender' : 'Apagar'}}</td>
+            <td><i class="fa" [ngClass]="{'fa-check text-success': action.confirmed, 'fa-close text-danger': !action.confirmed}"></i></td>
+            <td class="text-info">{{action.source ? 'Manual' : 'Sistema'}}</td>
+            <td>{{action.attempts}}</td>
+            <td class="text-info">{{action.createdAt | date:'d/M/yy, h:mm a'}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav [hidden]="page == 1 && actions.length < limit">
+        <ul class="pagination justify-content-center">
+          <li class="page-item">
+            <button class="btn btn-light" [disabled]="page == 1 || subLoading" (click)="getPrev()">Anterior</button>
+          </li>
+          <li class="mr-auto"></li>
+          <li *ngIf="subLoading"><i class="fa fa-spin fa-circle-o-notch text-muted fa-2x"></i></li>
+          <li class="mr-auto"></li>
+          <li class="page-item">
+            <button class="btn btn-light" [disabled]="actions.length < limit || subLoading" (click)="getNext()">Siguiente</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col" *ngIf="loading">
+    <i class="fa fa-spin fa-circle-o-notch"></i>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<br>
+<div class="card mb-3">
+  <table class="card-block table table-hover">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Nombre</th>
+      <th>Actual</th>
+      <th><span>Promedio</span></th>
+      <th class="d-none d-md-table-cell"><span>Máximo</span></th>
+      <th class="d-none d-md-table-cell"><span>Mínimo</span></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let sensor of sensors" class="pointer" routerLink="/sensors/{{sensor.id}}">
+      <td width="10" ><i class="fa fa-{{sensor.icon}}"></i></td>
+      <td>{{sensor.name}}</td>
+      <td class="text-info" *ngIf="sensor.type">{{sensor.value}}</td>
+      <td class="text-info" *ngIf="!sensor.type">{{sensor.value ? 'Encendido': 'Apagado'}}</td>
+      <td>{{sensor.avg || '---'}}</td>
+      <td class="d-none d-md-table-cell">{{sensor.max || '---'}}</td>
+      <td class="d-none d-md-table-cell">{{sensor.min || '---'}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

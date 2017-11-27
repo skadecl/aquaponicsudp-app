@@ -1,0 +1,154 @@
+<!--Edit actuator modal-->
+<ng-template let-c="close" let-d="dismiss" #eacm>
+  <div class="modal-header">
+    <h5 class="modal-title" *ngIf="!edit">Nuevo Actuador</h5>
+    <h5 class="modal-title" *ngIf="edit">Edición Actuador</h5>
+    <button type="button" class="close" aria-label="Close" (click)="d(true)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="onCreateActuator(f)" #f="ngForm" (change)="changes = true">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input
+              class="form-control"
+              type="text"
+              id="name"
+              name="name"
+              required
+              [(ngModel)]="actuator.name"
+              ngModel
+              #name="ngModel">
+            <div *ngIf="name.invalid">
+              <!--<small-->
+                <!--*ngIf="name.errors.required && (validated || name.touched)"-->
+                <!--class="form-text text-danger">-->
+                <!--Ingresa un nombre-->
+              <!--</small>-->
+              <small
+                *ngIf="name.errors.nameExists"
+                class="form-text text-danger">
+                El nombre ya existe
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="form-row">
+        <div class="col">
+          <label for="description">Descripción</label>
+          <textarea
+            required
+            class="form-control"
+            name="description"
+            id="description"
+            ngModel
+            [(ngModel)]="actuator.description"
+            #description="ngModel"
+            rows="3"></textarea>
+          <small
+            *ngIf="description.invalid && (validated || description.touched)"
+            class="form-text text-danger">
+            Ingresa una descripción
+          </small>
+        </div>
+      </div>
+      <br>
+      <div class="form-row">
+        <div class="col-4">
+          <label for="icon">Ícono</label>
+          <br>
+          <app-icon-picker
+            [selectedIcon]="actuator.icon"
+            [placement]="'right'"
+            (onSelect)="onSelectIcon($event)"
+          >
+          </app-icon-picker>
+          <input
+            id="icon"
+            name="icon"
+            type="text"
+            hidden
+            required
+            #icon="ngModel"
+            [(ngModel)]="selectedIcon"
+          >
+          <small
+            *ngIf="icon.invalid && validated"
+            class="form-text text-danger">
+            Selecciona un ícono
+          </small>
+        </div>
+
+        <div class="col-3 offset-3">
+          <label for="style">Color</label>
+          <br>
+          <app-color-picker
+            [selectedColor]="actuator.style"
+            (onSelect)="onSelectColor($event)"
+          >
+          </app-color-picker>
+          <input
+            id="style"
+            name="style"
+            type="text"
+            hidden
+            required
+            #style="ngModel"
+            [(ngModel)]="selectedColor"
+          >
+          <small
+            *ngIf="style.invalid && validated"
+            class="form-text text-danger">
+            Selecciona un color
+          </small>
+        </div>
+      </div>
+      <br>
+      <hr>
+      <br>
+      <div class="form-row">
+        <div class="col">
+          <button
+            [disabled]="saving"
+            (click)="c(false)"
+            class="btn btn-light border-dark pull-right"
+            type="button">
+            <i class="fa fa-close"></i>
+            &nbsp;&nbsp; Cancelar</button>
+          <button
+            [disabled]="saving"
+            class="btn btn-success pull-right mr-3"
+            type="submit">
+            <i class="fa fa-floppy-o"
+               [ngClass]="{'fa-spin': saving}">
+            </i>
+            &nbsp;&nbsp; Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
+
+<!--Error modal-->
+<!--<ng-template let-c="close" let-d="dismiss" #cm>-->
+  <!--<div class="modal-body">-->
+    <!--<p></p>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>-->
+    <!--<button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>-->
+  <!--</div>-->
+<!--</ng-template>-->

@@ -1,0 +1,27 @@
+<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive}">
+  <ul class="list-group">
+    <span class="list-group-item">
+    </span>
+    <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
+      <i class="fa fa-fw fa-home"></i>{{ 'Inicio' }}
+    </a>
+    <a routerLink="/users" routerLinkActive="router-link-active" class="list-group-item">
+      <i class="fa fa-fw fa-users"></i>{{ 'Usuarios' }}
+    </a>
+    <a routerLink="/sensors" routerLinkActive="router-link-active" class="list-group-item">
+      <i class="fa fa-fw fa-thermometer-2"></i>{{ 'Sensores' }}
+    </a>
+    <a routerLink="/actuators" routerLinkActive="router-link-active" class="list-group-item">
+      <i class="fa fa-fw fa-crosshairs"></i>{{ 'Actuadores' }}
+    </a>
+    <a routerLink="/alarms" routerLinkActive="router-link-active" class="list-group-item">
+      <i class="fa fa-fw fa-bell"></i>{{ 'Alarmas' }}
+    </a>
+    <a class="list-group-item">
+      <i class="fa fa-fw fa-exclamation-circle"></i>{{ 'Errores' }}
+    </a>
+    <a class="list-group-item">
+      <i class="fa fa-fw fa-bar-chart"></i>{{ 'Estadísticas' }}
+    </a>
+  </ul>
+</nav>

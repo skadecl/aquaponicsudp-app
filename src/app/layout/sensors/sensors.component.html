@@ -1,0 +1,111 @@
+<div class="section-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="text-muted">Gestión de Sensores</h2>
+    </div>
+  </div>
+  <hr>
+  <div class="sensors-content" *ngIf="!loading">
+    <div class="row">
+      <div class="col-10 col-sm-11">
+        <button class="btn btn-success" (click)="sensorEdit.openModal(false)"><i class="fa fa-plus"></i> &nbsp; Nuevo Sensor</button>
+      </div>
+      <div class="col-2 col-sm-1">
+        <button class="btn btn-primary" (click)="onRefresh()" [disabled]="refreshing"><i class="fa fa-refresh fa-spin" *ngIf="refreshing"></i><i class="fa fa-refresh" *ngIf="!refreshing"></i></button>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card mb-3">
+          <table class="card-block table table-hover">
+            <thead>
+            <tr>
+              <th>Nombre</th>
+              <th class="d-none d-sm-table-cell">Tipo</th>
+              <th class="d-none d-sm-table-cell">Ícono</th>
+              <th class="d-none d-lg-table-cell">Color</th>
+              <th>Unidad</th>
+              <th>Estado</th>
+              <th class="d-none d-md-table-cell">Acciones</th>
+
+            </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sensor of sensors" class="pointer">
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  >{{sensor.name}}
+                </td>
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  class="d-none d-sm-table-cell"
+                  >{{parseType(sensor.type)}}
+                </td>
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  width="10"
+                  class="d-none d-sm-table-cell"
+                  ><i class="fa fa-{{sensor.icon}}"></i>
+                </td>
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  class="d-none d-lg-table-cell"
+                  ><span class="bade badge-{{sensor.style}} badge-pill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                </td>
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  [ngClass]="{'text-muted': !sensor.unit}"
+                  >{{sensor.unit || '--'}}
+                </td>
+                <td
+                  (click)="onEnterSensor(sensor.id)"
+                  [ngClass]="{'text-success': sensor.status, 'text-danger': !sensor.status}"
+                  >{{sensor.status ? 'Activo' : 'Inactivo'}}
+                </td>
+                <td
+                  class="d-none d-md-table-cell"
+                  >
+                    <button
+                      (click)="onDisableSensor(sensor.id, disableBtn)"
+                      *ngIf="sensor.status"
+                      #disableBtn
+                      class="btn btn-secondary btn-sm"
+                      ><i class="fa fa-stop-circle fa-fw"></i> Desactivar
+                    </button>
+                    <button
+                      (click)="onEnableSensor(sensor.id, enableBtn)"
+                      *ngIf="!sensor.status"
+                      #enableBtn
+                      class="btn btn-primary btn-sm"
+                      ><i class="fa fa-play-circle fa-fw"></i> Activar
+                    </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-lg-12">
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+    </div>
+  </div>
+</div>
+
+
+<!--Confirm modal-->
+<ng-template let-c="close" let-d="dismiss" #cm>
+  <div class="modal-body">
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> el sensor?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<app-sensor-edit></app-sensor-edit>

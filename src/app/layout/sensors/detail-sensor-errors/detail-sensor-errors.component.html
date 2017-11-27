@@ -1,0 +1,28 @@
+<div class="row mt-2">
+  <div class="col" *ngIf="loading">
+    <i class="fa fa-spin fa-circle-o-notch"></i>
+  </div>
+
+  <div class="col" *ngIf="!loading">
+    <p class="text-info" *ngIf="!errors.length">Este sensor no tiene errores</p>
+
+    <div class="card mb-3" *ngIf="errors.length">
+      <table class="card-block table table-hover">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Mensaje</th>
+          <th>Fecha</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let error of errors; let i = index">
+          <td>{{i+1}}</td>
+          <td class="text-danger">{{error.message}}</td>
+          <td class="text-info">{{error.sampledate | date:'short'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

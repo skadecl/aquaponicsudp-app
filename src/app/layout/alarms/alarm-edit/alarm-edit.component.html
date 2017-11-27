@@ -1,0 +1,237 @@
+<!--Edit alarm modal-->
+<ng-template let-c="close" let-d="dismiss" #eam>
+  <div class="modal-header">
+    <h5 class="modal-title" *ngIf="!edit">Nueva Alarma</h5>
+    <h5 class="modal-title" *ngIf="edit">Edición</h5>
+    <button type="button" class="close" aria-label="Close" (click)="d(true)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input
+              class="form-control"
+              type="text"
+              name="name"
+              id="name"
+              [(ngModel)]="alarm.name"
+              ngModel
+              #name="ngModel"
+              required
+            >
+            <small
+              *ngIf="name.invalid && (validated || name.touched)"
+              class="form-text text-danger">
+              Ingresa un nombre
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea
+              class="form-control"
+              name="description"
+              id="description"
+              rows="2"
+              [(ngModel)]="alarm.description"
+              ngModel
+              required
+              #description="ngModel"
+            ></textarea>
+            <small
+              *ngIf="description.invalid && (validated || description.touched)"
+              class="form-text text-danger">
+              Ingresa una descripción
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-4">
+          <div class="form-group">
+            <label for="type">Criterio</label>
+            <select
+              class="form-control"
+              name="type"
+              id="type"
+              ngModel
+              [(ngModel)]="alarm.type"
+              required
+              #type="ngModel">
+              <option value="-1">Selecciona</option>
+              <option value="1">Menor que</option>
+              <option value="2">Mayor que</option>
+              <option value="0">Exactamente</option>
+            </select>
+            <small
+              *ngIf="type.invalid && (validated || type.touched)"
+              class="form-text text-danger">
+              Selecciona un criterio
+            </small>
+          </div>
+        </div>
+        <div class="col-3 offset-3">
+          <div class="form-group">
+            <label for="value">Valor</label>
+            <input
+              class="form-control"
+              name="value"
+              id="value"
+              type="number"
+              ngModel
+              [(ngModel)]="alarm.value"
+              required
+              #value="ngModel">
+            <small
+              *ngIf="value.invalid && (validated || value.touched)"
+              class="form-text text-danger">
+              Ingresa un valor
+            </small>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="form-group">
+            <label for="unit">&nbsp;</label>
+            <input
+              placeholder="{{sensorUnit}}"
+              type="text"
+              disabled
+              class="form-control"
+              id="unit">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-4">
+          <label for="icon">Ícono</label>
+          <br>
+          <app-icon-picker
+            [selectedIcon]="alarm.icon"
+            [placement]="'right'"
+            (onSelect)="onSelectIcon($event)">
+          </app-icon-picker>
+          <input
+            id="icon"
+            name="icon"
+            type="text"
+            hidden
+            required
+            [(ngModel)]="selectedIcon"
+            ngModel
+            #icon="ngModel">
+          <small
+            *ngIf="icon.invalid && (validated || icon.touched)"
+            class="form-text text-danger">
+            Selecciona un ícono
+          </small>
+        </div>
+
+        <div class="col-4 offset-3">
+          <label for="style">Color</label>
+          <br>
+          <app-color-picker
+            [selectedColor]="alarm.style"
+            (onSelect)="onSelectColor($event)">
+          </app-color-picker>
+          <input
+            id="style"
+            name="style"
+            type="text"
+            hidden
+            required
+            ngModel
+            [(ngModel)]="selectedColor"
+            #color="ngModel">
+          <small
+            *ngIf="color.invalid && (validated || color.touched)"
+            class="form-text text-danger">
+            Selecciona un color
+          </small>
+        </div>
+      </div>
+      <hr>
+      <div class="form-row">
+        <div class="col">
+          Efectos
+          <button
+            class="btn btn-sm btn-light d-inline"
+            type="button"
+            (click)="onAddEffect()"
+          ><i class="fa fa-plus"></i>
+          </button>
+          <small
+            *ngIf="noActuators"
+            class="form-text text-info">
+            No hay actuadores disponibles
+          </small>
+          <small
+            *ngIf="duplicated"
+            class="form-text text-danger d-inline">
+            Selecciona actuadores distintos!
+          </small>
+        </div>
+      </div>
+      <div class="form-row" *ngFor="let effect of effects; let i = index">
+        <div class="col-7 small">
+          <div class="form-group">
+            <label for="actuator-{{i}}" class="small">Actuador</label>
+            <select
+              (change)="findDuplicates()"
+              class="form-control"
+              name="actuator-{{i}}"
+              id="actuator-{{i}}"
+              [(ngModel)]="effect.actuator"
+              required
+              #actuator="ngModel">
+              <option value="">Selecciona</option>
+              <option value="{{actuator.id}}" *ngFor="let actuator of availableActuators">{{actuator.name}}</option>
+            </select>
+            <small
+              *ngIf="actuator.invalid && (validated || actuator.touched)"
+              class="form-text text-danger">
+              Selecciona un actuador
+            </small>
+          </div>
+        </div>
+        <div class="col-4 col-md-4 small">
+          <div class="form-group ">
+            <label for="status-{{i}}" class="small">Estado</label>
+            <select
+              class="form-control"
+              name="status-{{i}}"
+              id="status-{{i}}"
+              [(ngModel)]="effect.status"
+              required
+              #status="ngModel">
+              <option value="">Selecciona</option>
+              <option value="1">Encendido</option>
+              <option value="0">Apagado</option>
+            </select>
+            <small
+              *ngIf="status.invalid && (validated || status.touched)"
+              class="form-text text-danger">
+              Selecciona un estado
+            </small>
+          </div>
+        </div>
+        <div class="col-1">
+          <div class="form-group">
+            <br>
+            <button class="btn btn-sm btn-danger mt-2" (click)="onRemoveEffect(i)"><i class="fa fa-minus"></i></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" type="button" (click)="f.ngSubmit.next()" [disabled]="creating"><i class="fa fa-floppy-o" [ngClass]="{'fa-spin': creating}"></i> &nbsp; Guardar</button>
+    <button class="btn btn-light border-dark" type="button" (click)="c(true)">Cancelar</button>
+  </div>
+</ng-template>

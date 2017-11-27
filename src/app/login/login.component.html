@@ -1,0 +1,48 @@
+<div class="login-page" [@routerTransition]>
+  <div class="row">
+    <div class="col-lg-12">
+      <img src="assets/fish-icon.svg" width="200" />
+      <h1>AQuaponics UDP</h1>
+    </div>
+  </div>
+  <br>
+  <div class="row justify-content-center">
+    <form (submit)="onSignIn()" #f="ngForm" class="col-lg-4 col-sm-6">
+      <div class="form-group">
+        <input
+          type="text"
+          name="email"
+          class="form-control input-underline"
+          id="email"
+          placeholder="Correo Electrónico"
+          required
+          ngModel
+          email
+          #email="ngModel">
+        <span class="help-block text-danger" *ngIf="email.invalid && email.touched">Ingresa un correo valido</span>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="password"
+          class="form-control input-underline"
+          id="password"
+          name="password"
+          placeholder="Contraseña"
+          required
+          ngModel
+          #password="ngModel">
+        <span class="help-block text-danger" *ngIf="password.invalid && password.touched">Ingresa una contraseña</span>
+      </div>
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw" *ngIf="loading"></i>
+      <span class="help-block text-danger" *ngIf="loginError">Credenciales incorrectas</span>
+      <br><br>
+      <button
+        class="btn rounded-btn pointer"
+        type="submit"
+        [disabled]="loginForm.invalid"> Ingresar </button>
+      &nbsp;
+      <!--<a class="btn rounded-btn margin-top-25" [routerLink]="['/dashboard/card']" (click)="onLoggedin()"> Entrar como Invitado </a>-->
+    </form>
+  </div>
+</div>

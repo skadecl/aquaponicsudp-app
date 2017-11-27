@@ -1,0 +1,196 @@
+<!--Edit sensor modal-->
+<ng-template let-c="close" let-d="dismiss" #esm>
+  <div class="modal-header">
+    <h5 class="modal-title" *ngIf="!edit">Nuevo Sensor</h5>
+    <h5 class="modal-title" *ngIf="edit">Edición Sensor</h5>
+    <button type="button" class="close" aria-label="Close" (click)="d(true)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form (ngSubmit)="onCreateSensor(f)" #f="ngForm">
+      <div class="form-row">
+        <div class="col-8">
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input
+              class="form-control"
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Ingresa un nombre"
+              required
+              [(ngModel)]="sensor.name"
+              ngModel
+              (blur)="onValidateName(name.value, f)"
+              #name="ngModel">
+            <div *ngIf="name.invalid">
+              <small
+                *ngIf="name.errors.required && (validated || name.touched)"
+                class="form-text text-danger">
+                Ingresa un nombre
+              </small>
+              <small
+                *ngIf="name.errors.nameExists"
+                class="form-text text-danger">
+                El nombre ya existe
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="type">Tipo</label>
+            <select
+              id="type"
+              name="type"
+              class="form-control"
+              required
+              ngModel
+              [(ngModel)]="sensor.type"
+              type="number"
+              #type="ngModel"
+            >
+              <option value="-1">Selecciona</option>
+              <option value="1">Digital</option>
+              <option value="2">Analógico</option>
+              <option value="0">Switch</option>
+            </select>
+            <small
+              *ngIf="type.invalid && (validated || type.touched)"
+              class="form-text text-danger">
+              Selecciona un tipo
+            </small>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="form-row">
+        <div class="col">
+          <label for="description">Descripción</label>
+          <textarea
+            required
+            class="form-control"
+            name="description"
+            id="description"
+            placeholder="Describe el nuevo sensor"
+            ngModel
+            [(ngModel)]="sensor.description"
+            #description="ngModel"
+            rows="3"></textarea>
+          <small
+            *ngIf="description.invalid && (validated || description.touched)"
+            class="form-text text-danger">
+            Ingresa una descripción
+          </small>
+        </div>
+      </div>
+      <br>
+      <div class="form-row">
+        <div class="col-4">
+          <label for="icon">Ícono</label>
+          <br>
+          <app-icon-picker
+            [selectedIcon]="sensor.icon"
+            [placement]="'right'"
+            (onSelect)="onSelectIcon($event)"
+          >
+          </app-icon-picker>
+          <input
+            id="icon"
+            name="icon"
+            type="text"
+            hidden
+            required
+            #icon="ngModel"
+            [(ngModel)]="selectedIcon"
+          >
+          <small
+            *ngIf="icon.invalid && validated"
+            class="form-text text-danger">
+            Selecciona un ícono
+          </small>
+        </div>
+
+        <div class="col-4">
+          <label for="style">Color</label>
+          <br>
+          <app-color-picker
+            [selectedColor]="sensor.style"
+            (onSelect)="onSelectColor($event)"
+          >
+          </app-color-picker>
+          <input
+            id="style"
+            name="style"
+            type="text"
+            hidden
+            required
+            #style="ngModel"
+            [(ngModel)]="selectedColor"
+          >
+          <small
+            *ngIf="style.invalid && validated"
+            class="form-text text-danger">
+            Selecciona un color
+          </small>
+        </div>
+
+        <div class="col-3 offset-1">
+          <label for="unit">Unidad</label>
+          <input
+            required
+            [disabled]="type.value == 0"
+            id="unit"
+            name="unit"
+            class="form-control"
+            [(ngModel)]="sensor.unit"
+            [placeholder]="type.value ? 'Ej: ºC' : 'N/A'"
+            type="text"
+            ngModel
+            #unit="ngModel"
+          >
+          <small
+            *ngIf="unit.invalid && validated"
+            class="form-text text-danger">
+            Ingresa unidad
+          </small>
+        </div>
+      </div>
+      <br>
+      <hr>
+      <br>
+      <div class="form-row">
+        <div class="col">
+          <button
+            [disabled]="saving"
+            (click)="c(false)"
+            class="btn btn-light border-dark pull-right"
+            type="button">
+            <i class="fa fa-close"></i>
+            &nbsp;&nbsp; Cancelar</button>
+          <button
+            [disabled]="saving"
+            class="btn btn-success pull-right mr-3"
+            type="submit">
+            <i class="fa fa-floppy-o"
+               [ngClass]="{'fa-spin': saving}">
+            </i>
+            &nbsp;&nbsp; Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<!--Error modal-->
+<!--<ng-template let-c="close" let-d="dismiss" #cm>-->
+  <!--<div class="modal-body">-->
+    <!--<p></p>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>-->
+    <!--<button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>-->
+  <!--</div>-->
+<!--</ng-template>-->

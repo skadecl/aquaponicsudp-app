@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 margin-top-25" *ngFor="let sensor of sensors">
+    <div class="card">
+      <div class="card-header bg-{{sensor.style}}">
+        <div class="row">
+          <div class="col col-xs-3">
+            <i class="fa fa-{{sensor.icon}} fa-5x text-white"></i>
+          </div>
+          <div class="col text-right" *ngIf="sensor.type > 0">
+            <div class="text-black">{{sensor.value}} {{sensor.unit}}</div>
+            <div class="d-block small text-light">Promedio: {{sensor.avg}}</div>
+            <div class="d-block small text-light">Mínimo: {{sensor.min}}</div>
+            <div class="d-block small text-light">Máximo: {{sensor.max}}</div>
+          </div>
+          <div class="col col-xs-9 text-right" *ngIf="sensor.type == 0">
+            <div class="d-block text-black">{{sensor.value ? 'Encendido' : 'Apagado'}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="float-left">{{sensor.name}}</span>
+        <a class="float-right card-inverse pointer" routerLink="/sensors/{{sensor.id}}">
+          <span><i class="fa fa-arrow-circle-right"></i></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
