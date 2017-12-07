@@ -25,7 +25,7 @@
   <hr>
   <h5 class="text-muted">Actuadores</h5>
   <div class="row">
-    <div class="col-lg-4 col-md-6" *ngFor="let actuator of actuators">
+    <div class="col-lg-4 col-md-6 mt-2" *ngFor="let actuator of actuators">
       <button routerLink="/actuators/{{actuator.id}}" class="btn btn-lg btn-{{actuator.style}} border border-dark" type="button"><i class="fa fa-{{actuator.icon}} fa-fw"></i> {{actuator.name}} &nbsp;&nbsp;&nbsp;
         <span class="badge" [ngClass]="{'badge-success': actuator.status, 'badge-danger': !actuator.status}">{{actuator.status ? 'Encendido' : 'Apagado'}}</span></button>
     </div>

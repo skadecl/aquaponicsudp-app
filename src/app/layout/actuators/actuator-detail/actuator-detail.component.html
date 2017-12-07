@@ -12,7 +12,7 @@
                     <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="senLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': senLoading}"></i></button>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                       <button
-                        (click)="editActuator.openModal(true, actuator)"
+                        (click)="onEditActuator()"
                         class="dropdown-item"
                       ><i class="fa fa-pencil"></i> Editar
                       </button>
@@ -115,6 +115,15 @@
     </div>
   </div>
 </div>
+
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
 
 
 <!--Confirm modal-->

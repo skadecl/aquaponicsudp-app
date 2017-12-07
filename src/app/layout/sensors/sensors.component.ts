@@ -6,6 +6,7 @@ import 'rxjs/add/operator/finally';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SensorEditComponent } from './sensor-edit/sensor-edit.component';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-sensors',
@@ -19,13 +20,16 @@ export class SensorsComponent implements OnInit, OnDestroy {
   refreshing = false;
   confirmText: string;
   @ViewChild('cm') confirmModal;
+  @ViewChild('dm') dialogModal;
+  dialogMessage: string;
   @ViewChild(SensorEditComponent) sensorEdit;
 
   constructor(
     private sensorService: SensorService,
     private modalService: NgbModal,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -42,12 +46,21 @@ export class SensorsComponent implements OnInit, OnDestroy {
     );
   }
 
+  dialog(message: string) {
+    this.dialogMessage = message;
+    this.modalService.open(this.dialogModal);
+  }
+
   onRefresh() {
     this.refreshing = true;
     this.sensorService.fetchSensors();
   }
 
   onEnableSensor(id: number, button: HTMLButtonElement) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'activar';
     this.modalService.open(this.confirmModal).result.then((enable) => {
       if (enable) {
@@ -65,6 +78,10 @@ export class SensorsComponent implements OnInit, OnDestroy {
   }
 
   onDisableSensor(id: number, button: HTMLButtonElement) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'desactivar';
     this.modalService.open(this.confirmModal).result.then((disable) => {
       if (disable) {

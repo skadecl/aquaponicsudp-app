@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService } from '../../auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,6 +10,8 @@ import { Component } from '@angular/core';
 export class SidebarComponent {
   isActive = false;
   showMenu = '';
+
+  constructor(private auth: AuthService, private router: Router) { }
 
   eventCalled() {
     this.isActive = !this.isActive;
@@ -19,5 +23,10 @@ export class SidebarComponent {
     } else {
       this.showMenu = element;
     }
+  }
+
+  onSignOut() {
+    this.auth.signOut();
+    this.router.navigate(['/login']);
   }
 }

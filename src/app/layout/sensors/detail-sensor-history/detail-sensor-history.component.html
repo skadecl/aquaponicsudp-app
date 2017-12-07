@@ -1,3 +1,32 @@
-<p>
-  detail-sensor-history works!
-</p>
+<div class="row">
+  <div class="col-11" style="height: 300px;">
+    <ngx-charts-line-chart
+      [results]="history"
+      [gradient]="gradient"
+      [xAxis]="showXAxis"
+      [yAxis]="showYAxis"
+      [legend]="showLegend"
+      [showXAxisLabel]="showXAxisLabel"
+      [showYAxisLabel]="showYAxisLabel"
+      [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel"
+      [timeline]="true"
+      [autoScale]="autoScale"
+      (select)="onSelect($event)">
+    </ngx-charts-line-chart>
+  </div>
+</div>
+
+<nav>
+  <ul class="pagination justify-content-center">
+    <li class="page-item">
+      <button class="btn btn-light" [disabled]="subLoading" (click)="getNext()">Anterior</button>
+    </li>
+    <li class="mr-auto"></li>
+    <li *ngIf="subLoading"><i class="fa fa-spin fa-circle-o-notch text-muted fa-2x"></i></li>
+    <li class="mr-auto"></li>
+    <li class="page-item">
+      <button class="btn btn-light" [disabled]="subLoading" (click)="getPrev()">Siguiente</button>
+    </li>
+  </ul>
+</nav>

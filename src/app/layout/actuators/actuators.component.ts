@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActuatorEditComponent } from './actuator-edit/actuator-edit.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-actuators',
@@ -16,6 +17,8 @@ export class ActuatorsComponent implements OnInit {
   subscription: Subscription;
   confirmText: string;
   @ViewChild('cm') confirmModal;
+  @ViewChild('dm') dialogModal;
+  dialogMessage: string;
   loading = true;
   refreshing = false;
   actLoading = false;
@@ -24,7 +27,8 @@ export class ActuatorsComponent implements OnInit {
   constructor(private actuatorService: ActuatorService,
               private modalService: NgbModal,
               private router: Router,
-              private route: ActivatedRoute
+              private route: ActivatedRoute,
+              private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -41,6 +45,11 @@ export class ActuatorsComponent implements OnInit {
       );
   }
 
+  dialog(message: string) {
+    this.dialogMessage = message;
+    this.modalService.open(this.dialogModal);
+  }
+
   onRefresh() {
     this.refreshing = true;
     this.actuatorService.fetchActuators();
@@ -53,6 +62,10 @@ export class ActuatorsComponent implements OnInit {
   }
 
   onEnableActuator(id: number) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'ENCENDER';
     this.modalService.open(this.confirmModal).result.then((enable) => {
       if (enable) {
@@ -70,6 +83,10 @@ export class ActuatorsComponent implements OnInit {
   }
 
   onDisableActuator(id: number) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'APAGAR';
     this.modalService.open(this.confirmModal).result.then((disable) => {
       if (disable) {
@@ -87,6 +104,10 @@ export class ActuatorsComponent implements OnInit {
   }
 
   onLockActuator(id: number) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'BLOQUEAR';
     this.modalService.open(this.confirmModal).result.then((lock) => {
       if (lock) {
@@ -104,6 +125,10 @@ export class ActuatorsComponent implements OnInit {
   }
 
   onUnlockActuator(id: number) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'DESBLOQUEAR';
     this.modalService.open(this.confirmModal).result.then((unlock) => {
       if (unlock) {
@@ -121,6 +146,10 @@ export class ActuatorsComponent implements OnInit {
   }
 
   onDeleteActuator(id: number) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'ELIMINAR';
     this.modalService.open(this.confirmModal).result.then((remove) => {
       if (remove) {
@@ -136,6 +165,16 @@ export class ActuatorsComponent implements OnInit {
       }
     });
   }
+
+  onEditActuator(actuator: Actuator) {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.editActuator.openModal(true, actuator);
+  }
+
+
 
 
 }

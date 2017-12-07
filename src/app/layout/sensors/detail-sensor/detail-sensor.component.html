@@ -13,11 +13,11 @@
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                       <button
                         class="dropdown-item"
-                        (click)="alarmsView.newAlarm()"
+                        (click)="onAddAlarm()"
                         ><i class="fa fa-plus"></i> Crear Alarma
                       </button>
                       <button
-                        (click)="editSensor.openModal(true, sensor)"
+                        (click)="onEditSensor()"
                         class="dropdown-item"
                         ><i class="fa fa-pencil"></i> Editar
                       </button>
@@ -100,18 +100,18 @@
             [ngClass]="{'active text-primary': tab == 'errors'}"
             ><i class="fa fa-exclamation-circle"></i> Errores
           </a>
-          <!--<a-->
-            <!--(click)="setTab('history')"-->
-            <!--class="nav-item nav-link"-->
-            <!--[ngClass]="{'active text-primary': tab == 'history'}"-->
-            <!--&gt;<i class="fa fa-history"></i> Historial-->
-          <!--</a>-->
+          <a
+            (click)="setTab('history')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'history'}"
+            ><i class="fa fa-history"></i> Historial
+          </a>
         </nav>
         <app-detail-sensor-alarms [id]="id" [unit]="sensor.unit" [hidden]="tab != 'alarms'"></app-detail-sensor-alarms>
         <app-detail-sensor-errors [id]="id" [hidden]="tab != 'errors'"></app-detail-sensor-errors>
-        <app-detail-sensor-history [hidden]="tab != 'history'"></app-detail-sensor-history>
       </div>
     </div>
+    <app-detail-sensor-history *ngIf="tab == 'history'" [sensor]="sensor"></app-detail-sensor-history>
 
   </div>
 
@@ -131,6 +131,14 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
     <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
   </div>
 </ng-template>
 

@@ -38,11 +38,13 @@
       <span class="help-block text-danger" *ngIf="loginError">Credenciales incorrectas</span>
       <br><br>
       <button
-        class="btn rounded-btn pointer"
+        class="btn rounded-btn pointer text-success"
         type="submit"
         [disabled]="loginForm.invalid"> Ingresar </button>
-      &nbsp;
-      <!--<a class="btn rounded-btn margin-top-25" [routerLink]="['/dashboard/card']" (click)="onLoggedin()"> Entrar como Invitado </a>-->
+      <br><br>
+      <span
+        (click)="onGuestSignIn()"
+        class="small text-muted pointer">Entrar como Invitado</span>
     </form>
   </div>
 </div>

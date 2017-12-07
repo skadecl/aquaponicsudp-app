@@ -43,4 +43,25 @@ export class LoginComponent implements OnInit {
       );
   }
 
+  onGuestSignIn() {
+    this.loading = true;
+    this.loginError = false;
+    this.authService.signIn({email: 'guest', password: '1234'})
+      .subscribe(
+        (valid) => {
+          this.loading = false;
+
+          if (valid) {
+            this.router.navigate(['/dashboard/card']);
+          } else {
+            this.loginError = true;
+          }
+        },
+        () => {
+          this.loading = false;
+          this.loginError = true;
+        }
+      );
+  }
+
 }

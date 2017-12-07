@@ -5,7 +5,7 @@
     <a routerLink="/dashboard" routerLinkActive="router-link-active" class="list-group-item">
       <i class="fa fa-fw fa-home"></i>{{ 'Inicio' }}
     </a>
-    <a routerLink="/users" routerLinkActive="router-link-active" class="list-group-item">
+    <a routerLink="/users" routerLinkActive="router-link-active" *ngIf="false" class="list-group-item">
       <i class="fa fa-fw fa-users"></i>{{ 'Usuarios' }}
     </a>
     <a routerLink="/sensors" routerLinkActive="router-link-active" class="list-group-item">
@@ -17,11 +17,14 @@
     <a routerLink="/alarms" routerLinkActive="router-link-active" class="list-group-item">
       <i class="fa fa-fw fa-bell"></i>{{ 'Alarmas' }}
     </a>
-    <a class="list-group-item">
+    <a class="list-group-item" *ngIf="false">
       <i class="fa fa-fw fa-exclamation-circle"></i>{{ 'Errores' }}
     </a>
-    <a class="list-group-item">
+    <a routerLink="/statistics" routerLinkActive="router-link-active" *ngIf="auth.user.role" class="list-group-item">
       <i class="fa fa-fw fa-bar-chart"></i>{{ 'Estadísticas' }}
+    </a>
+    <a routerLink="/login" routerLinkActive="router-link-active" (click)="onSignOut()" class="list-group-item">
+      <i class="fa fa-fw fa-power-off"></i>{{ 'Salir' }}
     </a>
   </ul>
 </nav>

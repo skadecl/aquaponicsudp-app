@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/finally';
 import { AlarmEditComponent } from '../alarm-edit/alarm-edit.component';
+import { SubscriptionService } from '../../../shared/subscription.service';
+import { AuthService } from '../../../auth/auth.service';
 
 
 @Component({
@@ -18,15 +20,19 @@ export class AlarmDetailComponent implements OnInit, OnDestroy {
   id: number;
   subscription: Subscription;
   loading = true;
-  actLoading = false;
+  alLoading = false;
   confirmText = '';
+  dialogMessage: string;
+  @ViewChild('dm') dialogModal;
   @ViewChild('cm') confirmModal;
   @ViewChild(AlarmEditComponent) editAlarm;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private alarmService: AlarmService,
-              private modalService: NgbModal
+              private subscriptionService: SubscriptionService,
+              private modalService: NgbModal,
+              private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -52,14 +58,36 @@ export class AlarmDetailComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  dialog(message: string) {
+    this.dialogMessage = message;
+    this.modalService.open(this.dialogModal);
+  }
+
+
+  isSubscribed() {
+    return this.subscriptionService.isSubscribed(this.id);
+  }
+
+  onEditAlarm() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.editAlarm.openEditModal(this.alarm, true);
+  }
+
   onEnableAlarm() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'ENCENDER';
-    this.actLoading = true;
+    this.alLoading = true;
     this.modalService.open(this.confirmModal).result.then((enable) => {
       if (enable) {
         this.alarmService.updateAlarm(+this.id, {status: 1})
           .finally(
-            () => this.actLoading = false
+            () => this.alLoading = false
           )
           .subscribe(
             (alarm: Alarm) => this.alarmService.setAlarm(+this.id, alarm),
@@ -70,13 +98,17 @@ export class AlarmDetailComponent implements OnInit, OnDestroy {
   }
 
   onDisableAlarm() {
-    this.confirmText = 'APAGAR';
-    this.actLoading = true;
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.confirmText = 'DESACTIVAR';
+    this.alLoading = true;
     this.modalService.open(this.confirmModal).result.then((disable) => {
       if (disable) {
         this.alarmService.updateAlarm(+this.id, {status: 0})
           .finally(
-            () => this.actLoading = false
+            () => this.alLoading = false
           )
           .subscribe(
             (alarm: Alarm) => this.alarmService.setAlarm(+this.id, alarm),
@@ -87,14 +119,18 @@ export class AlarmDetailComponent implements OnInit, OnDestroy {
   }
 
   onDeleteAlarm() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'ELIMINAR';
-    this.actLoading = true;
+    this.alLoading = true;
     this.modalService.open(this.confirmModal).result.then((remove) => {
       if (remove) {
         this.alarmService.deleteAlarm(+this.id)
           .finally(
             () => {
-              this.actLoading = false;
+              this.alLoading = false;
               this.router.navigate(['../'], {relativeTo: this.route});
             }
           )
@@ -104,6 +140,48 @@ export class AlarmDetailComponent implements OnInit, OnDestroy {
           );
       }
     });
+  }
+
+  onSubscribe() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.alLoading = true;
+    this.subscriptionService.subscribeAlarm(this.id)
+      .finally(
+        () => this.alLoading = false
+      )
+      .subscribe(
+        () => {
+          this.subscriptionService.addSubscription(this.alarm);
+          this.dialog('Suscripción agregada con éxito');
+        },
+        (err) => console.log(err)
+      );
+  }
+
+  onUnsubscribe() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.alLoading = true;
+    this.subscriptionService.unsubscribeAlarm(this.id)
+      .finally(
+        () => this.alLoading = false
+      )
+      .subscribe(
+        () => {
+          this.subscriptionService.removeSubscription(this.id);
+          this.dialog('Suscripción eliminada!');
+        },
+        (err) => console.log(err)
+      );
+  }
+
+  onFinish(alarm: Alarm) {
+    this.alarm = alarm;
   }
 
   parseAlarmType(type: number) {

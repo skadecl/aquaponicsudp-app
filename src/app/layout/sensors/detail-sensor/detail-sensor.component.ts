@@ -7,6 +7,7 @@ import { DetailSensorAlarmsComponent } from '../detail-sensor-alarms/detail-sens
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import 'rxjs/add/operator/finally';
 import { SensorEditComponent } from '../sensor-edit/sensor-edit.component';
+import { AuthService } from '../../../auth/auth.service';
 
 
 @Component({
@@ -23,13 +24,16 @@ export class DetailSensorComponent implements OnInit, OnDestroy {
   confirmText = '';
   tab = 'alarms';
   @ViewChild('cm') confirmModal;
+  @ViewChild('dm') dialogModal;
+  dialogMessage: string;
   @ViewChild(DetailSensorAlarmsComponent) alarmsView;
   @ViewChild(SensorEditComponent) editSensor;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
               private sensorService: SensorService,
-              private modalService: NgbModal
+              private modalService: NgbModal,
+              private auth: AuthService
   ) { }
 
   ngOnInit() {
@@ -55,15 +59,24 @@ export class DetailSensorComponent implements OnInit, OnDestroy {
     this.tab = tab;
   }
 
+  dialog(message: string) {
+    this.dialogMessage = message;
+    this.modalService.open(this.dialogModal);
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   onEnableSensor() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'ACTIVAR';
-    this.senLoading = true;
     this.modalService.open(this.confirmModal).result.then((enable) => {
       if (enable) {
+        this.senLoading = true;
         this.sensorService.updateSensor(+this.id, {status: 1})
           .finally(
             () => this.senLoading = false
@@ -77,10 +90,14 @@ export class DetailSensorComponent implements OnInit, OnDestroy {
   }
 
   onDisableSensor() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
     this.confirmText = 'DESACTIVAR';
-    this.senLoading = true;
     this.modalService.open(this.confirmModal).result.then((disable) => {
       if (disable) {
+        this.senLoading = true;
         this.sensorService.updateSensor(+this.id, {status: 0})
           .finally(
             () => this.senLoading = false
@@ -94,10 +111,14 @@ export class DetailSensorComponent implements OnInit, OnDestroy {
   }
 
   onDeleteSensor() {
-    this.confirmText = 'eliminar';
-    this.senLoading = true;
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.confirmText = 'ELIMINAR';
     this.modalService.open(this.confirmModal).result.then((remove) => {
       if (remove) {
+        this.senLoading = true;
         this.sensorService.deleteSensor(+this.id)
           .finally(
             () => {
@@ -111,6 +132,22 @@ export class DetailSensorComponent implements OnInit, OnDestroy {
           );
       }
     });
+  }
+
+  onAddAlarm() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.alarmsView.newAlarm();
+  }
+
+  onEditSensor() {
+    if (!this.auth.user['role']) {
+      this.dialog('No tienes permisos suficientes');
+      return;
+    }
+    this.editSensor.openModal(true, this.sensor);
   }
 
   parseType(type: number) {

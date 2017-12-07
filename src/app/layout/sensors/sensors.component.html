@@ -8,7 +8,7 @@
   <div class="sensors-content" *ngIf="!loading">
     <div class="row">
       <div class="col-10 col-sm-11">
-        <button class="btn btn-success" (click)="sensorEdit.openModal(false)"><i class="fa fa-plus"></i> &nbsp; Nuevo Sensor</button>
+        <button class="btn btn-success" [disabled]="!auth.user.role" (click)="sensorEdit.openModal(false)"><i class="fa fa-plus"></i> &nbsp; Nuevo Sensor</button>
       </div>
       <div class="col-2 col-sm-1">
         <button class="btn btn-primary" (click)="onRefresh()" [disabled]="refreshing"><i class="fa fa-refresh fa-spin" *ngIf="refreshing"></i><i class="fa fa-refresh" *ngIf="!refreshing"></i></button>
@@ -95,6 +95,15 @@
     </div>
   </div>
 </div>
+
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
 
 
 <!--Confirm modal-->

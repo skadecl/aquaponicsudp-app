@@ -32,6 +32,10 @@ import { ActuatorDetailErrorsComponent } from './actuators/actuator-detail-error
 import { ActuatorDetailHistoryComponent } from './actuators/actuator-detail-history/actuator-detail-history.component';
 import { AlarmDetailComponent } from './alarms/alarm-detail/alarm-detail.component';
 import { AlarmDetailHistoryComponent } from './alarms/alarm-detail-history/alarm-detail-history.component';
+import { StatisticsComponent } from './statistics/statistics.component';
+import { ChartsModule } from 'ng2-charts';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { StatisticsErrorsComponent } from './statistics/statistics-errors/statistics-errors.component';
 
 @NgModule({
   imports: [
@@ -41,6 +45,8 @@ import { AlarmDetailHistoryComponent } from './alarms/alarm-detail-history/alarm
     NgbPopoverModule.forRoot(),
     NgbModalModule.forRoot(),
     NgbTabsetModule.forRoot(),
+    NgxChartsModule,
+    ChartsModule,
     FormsModule,
     LayoutRoutingModule
   ],
@@ -65,7 +71,9 @@ import { AlarmDetailHistoryComponent } from './alarms/alarm-detail-history/alarm
     ColorPickerComponent,
     DetailSensorAlarmsComponent,
     DetailSensorHistoryComponent,
-    DetailSensorErrorsComponent
+    DetailSensorErrorsComponent,
+    StatisticsComponent,
+    StatisticsErrorsComponent
   ],
   providers: [SensorService, ActuatorService, AlarmService, SubscriptionService]
 })

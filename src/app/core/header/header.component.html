@@ -27,8 +27,8 @@
         </a>
 
         <div class="dropdown-menu" ngbDropdownMenu>
-          <a class="dropdown-item"><i class="fa fa-fw fa-user"></i> {{ 'Perfil' }}</a>
-          <a class="dropdown-item"><i class="fa fa-fw fa-gear"></i> {{ 'Preferencias' }}</a>
+          <a class="dropdown-item" *ngIf="auth.user.role"><i class="fa fa-fw fa-user"></i> {{ 'Perfil' }}</a>
+          <a class="dropdown-item" *ngIf="auth.user.role"><i class="fa fa-fw fa-gear"></i> {{ 'Preferencias' }}</a>
           <a class="dropdown-item" [routerLink]="['/login']" (click)="onSignOut()"><i class="fa fa-fw fa-power-off"></i> {{ 'Salir' }} </a>
         </div>
       </li>

@@ -8,6 +8,7 @@ import { AlarmsComponent } from './alarms/alarms.component';
 import { DetailSensorComponent } from './sensors/detail-sensor/detail-sensor.component';
 import { ActuatorDetailComponent } from './actuators/actuator-detail/actuator-detail.component';
 import { AlarmDetailComponent } from './alarms/alarm-detail/alarm-detail.component';
+import { StatisticsComponent } from './statistics/statistics.component';
 
 const routes: Routes = [
   {
@@ -44,6 +45,10 @@ const routes: Routes = [
       {
         path: 'alarms/:id',
         component: AlarmDetailComponent
+      },
+      {
+        path: 'statistics',
+        component: StatisticsComponent
       }
     ]
   }

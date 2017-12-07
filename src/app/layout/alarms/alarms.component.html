@@ -1,17 +1,17 @@
-<div class="section-content" *ngIf="!loading">
+<div class="section-content">
   <div class="row">
     <div class="col-lg-12">
       <h2 class="text-muted">Gestión de Alarmas</h2>
     </div>
   </div>
   <hr>
-  <div class="row">
+  <div class="row" *ngIf="!loading">
     <div class="col-2 col-sm-1">
       <button class="btn btn-primary" (click)="onRefresh()" [disabled]="refreshing"><i class="fa fa-refresh fa-spin" *ngIf="refreshing"></i><i class="fa fa-refresh" *ngIf="!refreshing"></i></button>
     </div>
   </div>
 
-  <div class="row mt-2">
+  <div class="row mt-2" *ngIf="!loading">
     <div class="col-lg-12" *ngIf="!alarms.length">
       <span class="text-info mt-2">Este sensor no tiene alarmas.</span>
     </div>
@@ -23,7 +23,7 @@
           <tr>
             <th></th>
             <th>Nombre</th>
-            <th>Sensor</th>
+            <th class="d-none d-md-table-cell">Sensor</th>
             <th class="d-none d-md-table-cell">Tipo</th>
             <th class="d-none d-md-table-cell">Valor</th>
             <th>Estado</th>
@@ -34,7 +34,7 @@
           <tr *ngFor="let alarm of alarms" class="pointer">
             <td (click)="onEnterAlarm(alarm.id)" width="10" ><i class="fa fa-{{alarm.icon}}"></i></td>
             <td (click)="onEnterAlarm(alarm.id)">{{alarm.name}} <i class="fa fa-eye text-primary" *ngIf="isSubscribed(alarm.id)"></i></td>
-            <td (click)="onEnterAlarm(alarm.id)" class="text-muted">{{alarm.sensor.name}}</td>
+            <td (click)="onEnterAlarm(alarm.id)" class="text-muted d-none d-md-table-cell">{{alarm.sensor.name}}</td>
             <td (click)="onEnterAlarm(alarm.id)" class="text-info d-none d-md-table-cell">{{parseAlarmType(alarm.type)}}</td>
             <td (click)="onEnterAlarm(alarm.id)" class="text-info d-none d-md-table-cell">{{alarm.value}}</td>
             <td (click)="onEnterAlarm(alarm.id)" [ngClass]="{'text-success': alarm.status, 'text-danger': !alarm.status}">{{alarm.status ? 'Lista' : 'Desactivada'}}</td>
@@ -54,7 +54,7 @@
                 ><i class="fa fa-eye"></i> Suscribir
                 </button>
                 <button
-                  (click)="editAlarm.openEditModal(alarm, true)"
+                  (click)="onEditAlarm(alarm)"
                   class="dropdown-item"
                 ><i class="fa fa-pencil"></i> Editar
                 </button>
@@ -89,7 +89,7 @@
 <div class="loading-content" *ngIf="loading">
   <div class="row">
     <div class="col">
-      <i class="fa fa-spin fa-circle-o-notch"></i>
+      <i class="fa fa-spin fa-circle-o-notch fa-2x"></i>
     </div>
   </div>
 </div>

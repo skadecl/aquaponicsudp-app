@@ -9,31 +9,43 @@
                 <i class="fa fa-{{alarm.icon}} text-white"></i> &nbsp;{{alarm.name}}
                 <div class="pull-right">
                   <div ngbDropdown placement="bottom-right">
-                    <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="senLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': senLoading}"></i></button>
+                    <button class="btn btn-light" id="dropdownBasic1" ngbDropdownToggle [disabled]="alLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': alLoading}"></i></button>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                      <button
-                        (click)="editAlarm.openModal(true, alarm)"
-                        class="dropdown-item"
-                      ><i class="fa fa-pencil"></i> Editar
-                      </button>
-                      <button
-                        *ngIf="alarm.status"
-                        class="dropdown-item"
-                        (click)="onDisableAlarm()"
-                      ><i class="fa fa-toggle-off"></i> Apagar
-                      </button>
-                      <button
-                        *ngIf="!alarm.status"
-                        class="dropdown-item"
-                        (click)="onEnableAlarm()"
-                      ><i class="fa fa-toggle-on"></i> Encender
-                      </button>
-                      <button
-                        (click)="onDeleteAlarm()"
-                        class="dropdown-item"
-                      ><i class="fa fa-trash"></i> Eliminar
-                      </button>
-                    </div>
+                <button
+                  *ngIf="isSubscribed()"
+                  class="dropdown-item"
+                  (click)="onUnsubscribe(alarm.id)"
+                ><i class="fa fa-eye-slash"></i> Desuscribir
+                </button>
+                <button
+                  *ngIf="!isSubscribed()"
+                  class="dropdown-item"
+                  (click)="onSubscribe()"
+                ><i class="fa fa-eye"></i> Suscribir
+                </button>
+                <button
+                  (click)="onEditAlarm()"
+                  class="dropdown-item"
+                ><i class="fa fa-pencil"></i> Editar
+                </button>
+                <button
+                  *ngIf="alarm.status"
+                  class="dropdown-item"
+                  (click)="onDisableAlarm()"
+                ><i class="fa fa-stop-circle"></i> Desactivar
+                </button>
+                <button
+                  *ngIf="!alarm.status"
+                  class="dropdown-item"
+                  (click)="onEnableAlarm()"
+                ><i class="fa fa-play-circle"></i> Activar
+                </button>
+                <button
+                  (click)="onDeleteAlarm()"
+                  class="dropdown-item"
+                ><i class="fa fa-trash"></i> Eliminar
+                </button>
+              </div>
                   </div>
                 </div>
               </h2>
@@ -89,24 +101,18 @@
   </div>
 </div>
 
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
 
 <!--Confirm modal-->
 <ng-template let-c="close" let-d="dismiss" #cm>
   <div class="modal-body">
-    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> el actuador?</p>
-    <br>
-    <p *ngIf="confirmText == 'ENCENDER' || confirmText == 'APAGAR'">
-      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
-      <span class="small">Al apagar o encender manualmente un actuador, éste se bloqueará automáticamente, es decir, su estado no será cambiado por alarmas hasta ser desbloqueado manualmente.</span>
-    </p>
-    <p *ngIf="confirmText == 'BLOQUEAR'">
-      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
-      <span class="small">Al bloquear este actuador, su estado no podrá ser cambiado por alarmas y solo podrá ser encendido/apagado manualmente.</span>
-    </p>
-    <p *ngIf="confirmText == 'DESBLOQUEAR'">
-      <strong class="text-info"><i class="fa fa-info-circle"></i> Importante:</strong>
-      <span class="small">Al desbloquear este actuador, su estado podrá ser cambiado por alarmas.</span>
-    </p>
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> la alarma?</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
@@ -114,4 +120,4 @@
   </div>
 </ng-template>
 
-<app-alarm-edit></app-alarm-edit>
+<app-alarm-edit (onFinish)="onFinish($event)"></app-alarm-edit>

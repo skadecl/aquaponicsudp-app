@@ -1,0 +1,103 @@
+<div class="section-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="text-muted">Estadísticas</h2>
+    </div>
+  </div>
+  <div class="statistics-content" *ngIf="!loading">
+    <div class="row">
+      <div class="col-12">
+        <nav class="nav nav-tabs" role="tablist">
+          <a
+            (click)="setTab('correlations')"
+            class="nav-item nav-link pointer"
+            [ngClass]="{'active text-primary': tab == 'correlations'}"
+          ><i class="fa fa-history"></i> Correlación
+          </a>
+          <a
+            disabled
+            class="nav-item nav-link disabled"
+            [ngClass]="{'active text-primary': tab == 'errors1'}"
+          ><i class="fa fa-exclamation-circle"></i> Errores
+          </a>
+          <a
+            disabled
+            aria-disabled="true"
+            class="nav-item nav-link disabled"
+            [ngClass]="{'active text-primary': tab == 'errors2'}"
+          ><i class="fa fa-exclamation-triangle"></i> Alertas
+          </a>
+          <a
+            disabled
+            class="nav-item nav-link disabled"
+            [ngClass]="{'active text-primary': tab == 'errors3'}"
+          ><i class="fa fa-exclamation-circle"></i> Sensores
+          </a>
+        </nav>
+      </div>
+    </div>
+    <br>
+    <div class="row" *ngIf="tab == 'correlations'">
+      <div class="col" style="height: 500px;">
+        <ngx-charts-line-chart
+          [scheme]="colorScheme"
+          [results]="statsData"
+          [gradient]="gradient"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          [timeline]="true"
+          [autoScale]="autoScale"
+          (select)="onSelect($event)">
+        </ngx-charts-line-chart>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <button class="btn btn-light" [disabled]="subLoading" (click)="getNext()">Anterior</button>
+      </li>
+      <li class="mr-auto"></li>
+      <li *ngIf="subLoading"><i class="fa fa-spin fa-circle-o-notch text-muted fa-2x"></i></li>
+      <li class="mr-auto"></li>
+      <li class="page-item">
+        <button class="btn btn-light" [disabled]="subLoading" (click)="getPrev()">Siguiente</button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="row" *ngIf="loading">
+    <div class="col-lg-12">
+      <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw"></i>
+    </div>
+  </div>
+</div>
+
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
+
+
+<!--Confirm modal-->
+<ng-template let-c="close" let-d="dismiss" #cm>
+  <div class="modal-body">
+    <p>¿Seguro que deseas <strong>{{confirmText}}</strong> el sensor?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="c(true)">Confirmar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="c(false)">Cancelar</button>
+  </div>
+</ng-template>
+
+<app-sensor-edit></app-sensor-edit>

@@ -82,4 +82,8 @@ export class SensorService implements OnInit {
     return this.http.get(this.globals.api + '/sensors/' + id + '/errors');
   }
 
+  getHistory(id: number, page: number) {
+    return this.http.post(this.globals.api + '/sensors/' + id + '/history?limit=24&page=' + page, {});
+  }
+
 }

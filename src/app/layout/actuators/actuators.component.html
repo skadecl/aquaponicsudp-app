@@ -7,7 +7,7 @@
   <hr>
   <div class="row">
     <div class="col-10 col-sm-11">
-      <button class="btn btn-success" (click)="editActuator.openModal(false, null)"><i class="fa fa-plus"></i> &nbsp; Nuevo Actuador</button>
+      <button class="btn btn-success" [disabled]="!auth.user.role" (click)="editActuator.openModal(false, null)"><i class="fa fa-plus"></i> &nbsp; Nuevo Actuador</button>
     </div>
     <div class="col-2 col-sm-1">
       <button class="btn btn-primary" (click)="onRefresh()" [disabled]="refreshing"><i class="fa fa-refresh fa-spin" *ngIf="refreshing"></i><i class="fa fa-refresh" *ngIf="!refreshing"></i></button>
@@ -23,9 +23,9 @@
           <tr>
             <th></th>
             <th>Nombre</th>
-            <th>Descripción</th>
+            <th class="d-none d-md-table-cell">Descripción</th>
             <th>Estado</th>
-            <th>Color</th>
+            <th class="d-none d-md-table-cell">Color</th>
             <th>Opciones</th>
           </tr>
           </thead>
@@ -33,14 +33,14 @@
           <tr *ngFor="let actuator of actuators" class="pointer">
             <td (click)="onEnterActuator(actuator.id)" width="10" ><i class="fa fa-{{actuator.icon}}"></i></td>
             <td (click)="onEnterActuator(actuator.id)">{{actuator.name}} <i class="fa" [ngClass]="{'fa-lock text-danger': actuator.lock, 'fa-unlock text-success': !actuator.lock}"></i></td>
-            <td (click)="onEnterActuator(actuator.id)" class="small">{{actuator.description}}</td>
+            <td (click)="onEnterActuator(actuator.id)" class="small d-none d-md-table-cell">{{actuator.description}}</td>
             <td (click)="onEnterActuator(actuator.id)" [ngClass]="{'text-success': actuator.status, 'text-danger': !actuator.status}">{{actuator.status ? 'Encendido' : 'Apagado'}}</td>
-            <td (click)="onEnterActuator(actuator.id)"><span class="bade badge-{{actuator.style}} badge-pill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+            <td (click)="onEnterActuator(actuator.id)" class="d-none d-md-table-cell"><span class="bade badge-{{actuator.style}} badge-pill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
             <td ngbDropdown placement="left" container="body">
               <button class="btn btn-light" ngbDropdownToggle [disabled]="subLoading"><i class="fa fa-cog" [ngClass]="{'fa-spin': subloading}"></i></button>
               <div ngbDropdownMenu>
                 <button
-                  (click)="editActuator.openModal(true, actuator)"
+                  (click)="onEditActuator(actuator)"
                   class="dropdown-item"
                 ><i class="fa fa-pencil"></i> Editar
                 </button>
@@ -84,6 +84,14 @@
   </div>
 
 </div>
+
+<!--Dialog modal-->
+<ng-template let-c="close" let-d="dismiss" #dm>
+  <div class="modal-body">
+    <p>{{dialogMessage}}</p>
+    <button type="button" class=" float-right btn btn-outline-dark" (click)="c(true)">OK</button>
+  </div>
+</ng-template>
 
 
 <!--Confirm modal-->
